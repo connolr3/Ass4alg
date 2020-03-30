@@ -47,21 +47,25 @@ public class CompetitionDijkstra {
 				numberEdges =  Integer.parseInt(line);
 			if(i>1)
 			{
-				double[][] edges = new double[numberEdges][numberEdges];
+				double[][] edges = new double[vertices][vertices];
 				String[] splited = line.split("\\s+");
 				edges[Integer.parseInt(splited[0])][Integer.parseInt(splited[1])]=Double.parseDouble(splited[2]);
+				System.out.println("4-0   "+edges[4][0]);
 			}
 		}
-		double[]  distTo = new double[vertices];
 	}
-public static void printing(String filename) throws FileNotFoundException {
-	File comp = new File(filename);
-	Scanner scan = new Scanner(comp);
-	while (scan.hasNextLine()) {
-		String line = scan.nextLine();
-		System.out.println(line);
+	double[]  distTo1 = new double[vertices];
+	double[]  edgeTo = new double[vertices];
+
+	public void getSP (int v ) {
+		for (int i = 0;i<distTo.length;i++) {
+			distTo[i]=10000;
+		}
+		distTo[v]=0;
 	}
-}
+	private void relaxEdge(int i) {
+	
+	}
 	/**
 	 * @return int: minimum minutes that will pass before the three contestants can meet
 	 */
@@ -85,7 +89,7 @@ public static void printing(String filename) throws FileNotFoundException {
 			}
 		}
 		CompetitionDijkstra dd= new CompetitionDijkstra("tinyEWD.txt",3,4,5);
-	//printing("tinyEWD.txt");
+		//printing("tinyEWD.txt");
 
 	}
 }
