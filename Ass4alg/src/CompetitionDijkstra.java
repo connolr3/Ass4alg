@@ -24,7 +24,6 @@ public class CompetitionDijkstra {
 	public int sc;
 	public int numberEdges;
 	public int vertices;
-	public double[][] edgeWeights;
 	public double[][] distTo;
 	public int[][]  edgeTo;
 	/**
@@ -40,55 +39,71 @@ public class CompetitionDijkstra {
 		Scanner scan = new Scanner(file);
 		for(int i = 0;scan.hasNextLine();i++) {
 			String line = scan.nextLine();
-			System.out.println(line+i);
 			if (i==0) {
-				vertices = Integer.parseInt(line);
-				edgeWeights = new double[vertices][vertices];	
+				vertices = Integer.parseInt(line);	
 				edgeTo = new int[vertices][vertices];
 				distTo = new double[vertices][vertices];
+				// Initialize distTo[s][s] to 0 and distTo[s][v] to infinity for all other vertices v. 
+				for (int rowIndex = 0;rowIndex<vertices;rowIndex++) {
+					for (int columnIndex=0;columnIndex<vertices;columnIndex++) {
+						if(rowIndex==columnIndex) 
+							distTo[rowIndex][columnIndex]=0;
+						else
+							distTo[rowIndex][columnIndex]=10000;
+					}
+				}
 			}
 			else if (i==1)
 				numberEdges =  Integer.parseInt(line);
 			if(i>1)
 			{
 				String[] splited = line.split("\\s+");
-				edgeWeights[Integer.parseInt(splited[0])][Integer.parseInt(splited[1])]=Double.parseDouble(splited[2]);
-				System.out.println("4-0   "+edgeWeights[4][0]);
+				int v = Integer.parseInt(splited[0]);
+				int w = Integer.parseInt(splited[1]);
+				double weight = Double.parseDouble(splited[2]);
+				edgeTo[v][w]=v;
+				distTo[v][w]=weight;
 			}
 		}
-		printArray(distTo)
-		// Initialize distTo[s][s] to 0 and distTo[s][v] to infinity for all other vertices v. 
-		for (int rowIndex = 0;rowIndex<vertices;rowIndex++) {
-			for (int columnIndex=0;columnIndex<vertices;columnIndex++) {
-				if(rowIndex==columnIndex) {
-					distTo[rowIndex][columnIndex]=0;
-					edgeTo[rowIndex][columnIndex]=(Integer) null;//the last edge from itself is null
-					edgeWeights[rowIndex][columnIndex]=0;//the distance from vertice f to vertex f is 0
-				}
-				distTo[rowIndex][columnIndex]=10000;
-			}
-		}
-		int source = 0;
-		
+				
+		System.out.println("DISTANCE TO");
+		printArray(distTo,vertices,vertices);
+		System.out.println();
+		System.out.println("EDGE TO");
+		printArray(edgeTo,vertices,vertices);
+		System.out.println();
+
+
+
 	}
-	
+
 	public void getSP (int v ) {
 		for (int i = 0;i<distTo.length;i++) {
-	//		distTo[i]=10000;
+			//		distTo[i]=10000;
 		}
-	//	distTo[v]=0;
+		//	distTo[v]=0;
 	}
 	private void relaxEdge(int i) {
-	
+
 	}
 	public void printArray(double[][]array,int rows,int columns) {
 		for(int i = 0; i<rows; i++)
 		{
-		    for(int j = 0; j<columns; j++)
-		    {
-		        System.out.print(array[i][j]);
-		    }
-		    System.out.println();
+			for(int j = 0; j<columns; j++)
+			{
+				System.out.print(array[i][j]+"  ");
+			}
+			System.out.println();
+		}
+	}
+	public void printArray(int[][]array,int rows,int columns) {
+		for(int i = 0; i<rows; i++)
+		{
+			for(int j = 0; j<columns; j++)
+			{
+				System.out.print(array[i][j]+"  ");
+			}
+			System.out.println();
 		}
 	}
 	/**
