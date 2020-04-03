@@ -1,8 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
-//import java.util.ArrayList;
 import java.util.Scanner;
 /*
  * A Contest to Meet (ACM) is a reality TV contest that sets three contestants at three random
@@ -21,9 +19,9 @@ import java.util.Scanner;
  * This class implements the competition using Dijkstra's algorithm
  */
 public class CompetitionDijkstra {
-	public int sa;
-	public int sb;
-	public int sc;
+	public int sA;
+	public int sB;
+	public int sC;
 	public int numberEdges;
 	public int vertices;
 	public ArrayList<DirectedEdge>[] adj;
@@ -36,10 +34,10 @@ public class CompetitionDijkstra {
 	 * @param sA, sB, sC: speeds for 3 contestants
 	 * @throws FileNotFoundException 
 	 */
-	CompetitionDijkstra (String filename, int sa, int sb, int sc) throws FileNotFoundException{
-		this.sa=sa;
-		this.sb=sb;
-		this.sc=sc;
+	CompetitionDijkstra (String filename, int sA, int sB, int sC) throws FileNotFoundException{
+		this.sA=sA;
+		this.sB=sB;
+		this.sC=sC;
 		File file = new File(filename);
 		Scanner scan = new Scanner(file);
 		for(int i = 0;scan.hasNextLine();i++) {
@@ -61,7 +59,7 @@ public class CompetitionDijkstra {
 							distTo[rowIndex][columnIndex]=0;
 							edgeTo[rowIndex][columnIndex]=rowIndex;}
 						else {
-							distTo[rowIndex][columnIndex]=10000;
+							distTo[rowIndex][columnIndex]=Double.MAX_VALUE;
 							edgeTo[rowIndex][columnIndex]=-1;
 						}
 					}
@@ -86,21 +84,13 @@ public class CompetitionDijkstra {
 				adj[v].add(edge); 
 			}
 		}
-		
+
 		for (int source=0;source<vertices;source++) {
 			System.out.println(source);
 			relaxAllEdgesfromVertex(source, source);
-			}
-		printArrays();
+		}
 	}
-public void printArrays() {
-	System.out.println("DISTANCE TO");
-	printArray(distTo,vertices,vertices);
-	System.out.println();
-	System.out.println("EDGE TO");
-	printArray(edgeTo,vertices,vertices);
-	System.out.println();
-}
+
 
 	private void relaxAllEdgesfromVertex(int source, int vertex) {
 		for (DirectedEdge edge : adj[vertex]) {
@@ -118,7 +108,7 @@ public void printArrays() {
 	 */
 	public int timeRequiredforCompetition(){
 		//Handle Errors  - the 3 speeds must be between 50 and 100 (inclusive)
-		if (sa<50||sa>100||sb<50||sb>100||sc<50||sc>100) 
+		if (sA<50||sA>100||sB<50||sB>100||sC<50||sC>100) 
 			return -1;
 		if(numberEdges==0||vertices==0) 
 			return -1;
@@ -138,35 +128,13 @@ public void printArrays() {
 			}
 		}
 		maxDist=maxDist*1000;//convert from km to m
-		double slowestSpeed = Math.min(sa, Math.min(sb, sc));
+		double slowestSpeed = Math.min(sA, Math.min(sB, sB));
 		return (int) Math.ceil(maxDist/slowestSpeed);
 	}
 
 	public static void main (String[]args) throws FileNotFoundException {
-		CompetitionDijkstra dd= new CompetitionDijkstra("input-N.txt",55,60,92);
+		CompetitionDijkstra dd= new CompetitionDijkstra("tinyEWD.txt",55,60,92);
 		int g = dd.timeRequiredforCompetition();
 		System.out.println("Shortest Time = "+g);
-
-	}
-
-	public void printArray(double[][]array,int rows,int columns) {
-		for(int i = 0; i<rows; i++)
-		{
-			for(int j = 0; j<columns; j++)
-			{
-				System.out.print(array[i][j]+"  ");
-			}
-			System.out.println();
-		}
-	}
-	public void printArray(int[][]array,int rows,int columns) {
-		for(int i = 0; i<rows; i++)
-		{
-			for(int j = 0; j<columns; j++)
-			{
-				System.out.print(array[i][j]+"  ");
-			}
-			System.out.println();
-		}
 	}
 }
