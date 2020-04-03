@@ -87,8 +87,11 @@ public class CompetitionDijkstra {
 			}
 		}
 		
-		for (int source=0;source<vertices;source++) 
+		for (int source=0;source<vertices;source++) {
+			System.out.println(source);
 			relaxAllEdgesfromVertex(source, source);
+			}
+		printArrays();
 	}
 public void printArrays() {
 	System.out.println("DISTANCE TO");
@@ -115,9 +118,10 @@ public void printArrays() {
 	 */
 	public int timeRequiredforCompetition(){
 		//Handle Errors  - the 3 speeds must be between 50 and 100 (inclusive)
-		if (sa<50||sa>100||sb<50||sb>100||sc<50||sc>100) {
+		if (sa<50||sa>100||sb<50||sb>100||sc<50||sc>100) 
 			return -1;
-		}
+		if(numberEdges==0||vertices==0) 
+			return -1;
 		//The worst case scenario is the slowest walker ends up having to walk the longest "shortest" path
 		double maxDist=0;
 		for (int rowIndex = 0;rowIndex<vertices;rowIndex++) {
@@ -139,9 +143,9 @@ public void printArrays() {
 	}
 
 	public static void main (String[]args) throws FileNotFoundException {
-		CompetitionDijkstra dd= new CompetitionDijkstra("1000EWD.txt",55,60,92);
+		CompetitionDijkstra dd= new CompetitionDijkstra("input-N.txt",55,60,92);
 		int g = dd.timeRequiredforCompetition();
-		System.out.println(g);
+		System.out.println("Shortest Time = "+g);
 
 	}
 
