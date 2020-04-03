@@ -62,7 +62,7 @@ public class CompetitionDijkstra {
 							edgeTo[rowIndex][columnIndex]=rowIndex;}
 						else {
 							distTo[rowIndex][columnIndex]=10000;
-							edgeTo[rowIndex][columnIndex]=vertices;
+							edgeTo[rowIndex][columnIndex]=-1;
 						}
 					}
 				}
@@ -118,28 +118,35 @@ public class CompetitionDijkstra {
 	/**
 	 * @return int: minimum minutes that will pass before the three contestants can meet
 	 */
-
 	public int timeRequiredforCompetition(){
 		//Handle Errors  - the 3 speeds must be between 50 and 100 (inclusive)
 		if (sa<50||sa>100||sb<50||sb>100||sc<50||sc>100) {
 			return -1;
 		}
-		//TO DO
-		return -1;
+		//The worst case scenario is the slowest walker ends up having to walk the longest "shortest" path
+		double maxDist=0;
+		for (int rowIndex = 0;rowIndex<vertices;rowIndex++) {
+			for (int columnIndex=0;columnIndex<vertices;columnIndex++) {
+				// If  its not possible to run the competition 
+				//(i.e., if there are 2 random locations in a city between which no path exists), 
+				//the method should return -1
+				if (edgeTo[rowIndex][columnIndex]==-1) {
+					return -1;
+				}
+				if (distTo[rowIndex][columnIndex]>maxDist) {
+					maxDist = distTo[rowIndex][columnIndex];
+				}
+			}
+		}
+		maxDist=maxDist*1000;//convert from km to m
+		double slowestSpeed = Math.min(sa, Math.min(sb, sc));
+		return (int) Math.ceil(maxDist/slowestSpeed);
 	}
 
 	public static void main (String[]args) throws FileNotFoundException {
 		CompetitionDijkstra dd= new CompetitionDijkstra("tinyEWD.txt",3,4,5);
 
 	}
-
-
-
-
-
-
-
-
 
 	public void printArray(double[][]array,int rows,int columns) {
 		for(int i = 0; i<rows; i++)
