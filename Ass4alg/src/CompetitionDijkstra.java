@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 //import java.util.ArrayList;
 import java.util.Scanner;
-//Are we allowed use priority queues
 /*
  * A Contest to Meet (ACM) is a reality TV contest that sets three contestants at three random
  * city intersections. In order to win, the three contestants need all to meet at any intersection
@@ -37,13 +36,14 @@ public class CompetitionDijkstra {
 	 * @param sA, sB, sC: speeds for 3 contestants
 	 * @throws FileNotFoundException 
 	 */
-	CompetitionDijkstra (String filename, int sA, int sB, int sC) throws FileNotFoundException{
+	CompetitionDijkstra (String filename, int sa, int sb, int sc) throws FileNotFoundException{
 		this.sa=sa;
 		this.sb=sb;
 		this.sc=sc;
 		File file = new File(filename);
 		Scanner scan = new Scanner(file);
 		for(int i = 0;scan.hasNextLine();i++) {
+			System.out.println(i);
 			String line = scan.nextLine();
 			if (i==0) {
 				vertices = Integer.parseInt(line);	
@@ -71,39 +71,34 @@ public class CompetitionDijkstra {
 				numberEdges =  Integer.parseInt(line);
 			if(i>1)
 			{
-				String[] splited = line.split("\\s+");
-				int v = Integer.parseInt(splited[0]);
-				int w = Integer.parseInt(splited[1]);
-				double weight = Double.parseDouble(splited[2]);
+				int firstNonZero = 0;
+				while(line.charAt(firstNonZero)==' ') {
+					firstNonZero++;	
+				}
+				line = line.substring(firstNonZero);
+				String[] splitted = line.split("\\s+");
+				int v = Integer.parseInt(splitted[0]);
+				int w = Integer.parseInt(splitted[1]);
+				double weight = Double.parseDouble(splitted[2]);
 				//edgeTo[v][w]=v;
 				//distTo[v][w]=weight;
 				DirectedEdge edge = new DirectedEdge(v,w,weight);
 				adj[v].add(edge); 
 			}
 		}
-		System.out.println("DISTANCE TO");
-		printArray(distTo,vertices,vertices);
-		System.out.println();
-		System.out.println("EDGE TO");
-		printArray(edgeTo,vertices,vertices);
-		System.out.println();
-
-		for (int source=0;source<vertices;source++) {
-			getSP(source);
-		}
-
-		System.out.println("DISTANCE TO");
-		printArray(distTo,vertices,vertices);
-		System.out.println();
-		System.out.println("EDGE TO");
-		printArray(edgeTo,vertices,vertices);
-		System.out.println();
+		
+		for (int source=0;source<vertices;source++) 
+			relaxAllEdgesfromVertex(source, source);
 	}
+public void printArrays() {
+	System.out.println("DISTANCE TO");
+	printArray(distTo,vertices,vertices);
+	System.out.println();
+	System.out.println("EDGE TO");
+	printArray(edgeTo,vertices,vertices);
+	System.out.println();
+}
 
-	public void getSP (int s) 
-	{
-		relaxAllEdgesfromVertex(s,s);
-	}
 	private void relaxAllEdgesfromVertex(int source, int vertex) {
 		for (DirectedEdge edge : adj[vertex]) {
 			int from = edge.from();
@@ -144,7 +139,9 @@ public class CompetitionDijkstra {
 	}
 
 	public static void main (String[]args) throws FileNotFoundException {
-		CompetitionDijkstra dd= new CompetitionDijkstra("tinyEWD.txt",3,4,5);
+		CompetitionDijkstra dd= new CompetitionDijkstra("1000EWD.txt",55,60,92);
+		int g = dd.timeRequiredforCompetition();
+		System.out.println(g);
 
 	}
 
