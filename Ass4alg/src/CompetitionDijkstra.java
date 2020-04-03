@@ -41,7 +41,6 @@ public class CompetitionDijkstra {
 		File file = new File(filename);
 		Scanner scan = new Scanner(file);
 		for(int i = 0;scan.hasNextLine();i++) {
-			System.out.println(i);
 			String line = scan.nextLine();
 			if (i==0) {
 				vertices = Integer.parseInt(line);	
@@ -86,11 +85,9 @@ public class CompetitionDijkstra {
 		}
 
 		for (int source=0;source<vertices;source++) {
-			System.out.println(source);
 			relaxAllEdgesfromVertex(source, source);
 		}
 	}
-
 
 	private void relaxAllEdgesfromVertex(int source, int vertex) {
 		for (DirectedEdge edge : adj[vertex]) {
