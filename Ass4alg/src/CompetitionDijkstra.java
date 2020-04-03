@@ -1,9 +1,10 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 //import java.util.ArrayList;
 import java.util.Scanner;
-
+//Are we allowed use priority queues
 /*
  * A Contest to Meet (ACM) is a reality TV contest that sets three contestants at three random
  * city intersections. In order to win, the three contestants need all to meet at any intersection
@@ -26,8 +27,9 @@ public class CompetitionDijkstra {
 	public int sc;
 	public int numberEdges;
 	public int vertices;
-	public ArrayList<Double>[] adj;
-	ArrayList<Integer>[] al = new ArrayList[n]; 
+	public ArrayList<DirectedEdge>[] adj;
+	//public Array[] distTo;
+	//public ArrayList<Integer>[] edgeTo;
 	public double[][] distTo;
 	public int[][]  edgeTo;
 	/**
@@ -48,14 +50,20 @@ public class CompetitionDijkstra {
 				edgeTo = new int[vertices][vertices];
 				distTo = new double[vertices][vertices];
 				adj = new ArrayList[vertices];
+				//edgeTo = new ArrayList[vertices];
+				//distTo = new ArrayList[vertices];
 				// Initialize distTo[s][s] to 0 and distTo[s][v] to infinity for all other vertices v. 
 				for (int rowIndex = 0;rowIndex<vertices;rowIndex++) {
-					adj[rowIndex] = new ArrayList<Double>(); 
+					adj[rowIndex] = new ArrayList<DirectedEdge>(); 
 					for (int columnIndex=0;columnIndex<vertices;columnIndex++) {
-						if(rowIndex==columnIndex) 
+						//if edgeTo[v][w]=vertices, it hasn't been visisted
+						if(rowIndex==columnIndex) {
 							distTo[rowIndex][columnIndex]=0;
-						else
+							edgeTo[rowIndex][columnIndex]=rowIndex;}
+						else {
 							distTo[rowIndex][columnIndex]=10000;
+							edgeTo[rowIndex][columnIndex]=vertices;
+						}
 					}
 				}
 			}
@@ -67,44 +75,72 @@ public class CompetitionDijkstra {
 				int v = Integer.parseInt(splited[0]);
 				int w = Integer.parseInt(splited[1]);
 				double weight = Double.parseDouble(splited[2]);
-				edgeTo[v][w]=v;
-				distTo[v][w]=weight;
-				//ArrayList edge = new
-				adj[v].add(v); 
+				//edgeTo[v][w]=v;
+				//distTo[v][w]=weight;
+				DirectedEdge edge = new DirectedEdge(v,w,weight);
+				adj[v].add(edge); 
 			}
 		}
-				
 		System.out.println("DISTANCE TO");
 		printArray(distTo,vertices,vertices);
 		System.out.println();
 		System.out.println("EDGE TO");
 		printArray(edgeTo,vertices,vertices);
 		System.out.println();
-		int source = 0;
-		getSP(source);
+
+		for (int source=0;source<vertices;source++) {
+			getSP(source);
+		}
+
+		System.out.println("DISTANCE TO");
+		printArray(distTo,vertices,vertices);
+		System.out.println();
+		System.out.println("EDGE TO");
+		printArray(edgeTo,vertices,vertices);
+		System.out.println();
 	}
 
-	public void getSP (int v ) {
-		printRow(edgeTo,v);
-		printRow(distTo,v);
-		double minDist = distTo[v][0];
-		for (int column=1;column<vertices;column++) {
-			minDist = Math.min(distTo[v][column]);
+	public void getSP (int s) 
+	{
+		relaxAllEdgesfromVertex(s,s);
+	}
+	private void relaxAllEdgesfromVertex(int source, int vertex) {
+		for (DirectedEdge edge : adj[vertex]) {
+			int from = edge.from();
+			int to = edge.to();
+			if (distTo[source][to]>(distTo[source][from]+edge.weight())) {
+				edgeTo[source][to]=from;
+				distTo[source][to]=edge.weight()+distTo[source][from];
+				relaxAllEdgesfromVertex(source,to);
+			}	
 		}
 	}
-	public void printRow(double[][]table,int row){
-		for(int j = 0; j < table[1].length; j++)
-			   System.out.print(table[row][j]+"   ");
-		System.out.println();
+	/**
+	 * @return int: minimum minutes that will pass before the three contestants can meet
+	 */
+
+	public int timeRequiredforCompetition(){
+		//Handle Errors  - the 3 speeds must be between 50 and 100 (inclusive)
+		if (sa<50||sa>100||sb<50||sb>100||sc<50||sc>100) {
+			return -1;
+		}
+		//TO DO
+		return -1;
 	}
-	public void printRow(int[][]table,int row){
-		for(int j = 0; j < table[1].length; j++)
-			   System.out.print(table[row][j]+"   ");
-		System.out.println();
-	}
-	private void relaxEdge(int i) {
+
+	public static void main (String[]args) throws FileNotFoundException {
+		CompetitionDijkstra dd= new CompetitionDijkstra("tinyEWD.txt",3,4,5);
 
 	}
+
+
+
+
+
+
+
+
+
 	public void printArray(double[][]array,int rows,int columns) {
 		for(int i = 0; i<rows; i++)
 		{
@@ -124,18 +160,5 @@ public class CompetitionDijkstra {
 			}
 			System.out.println();
 		}
-	}
-	/**
-	 * @return int: minimum minutes that will pass before the three contestants can meet
-	 */
-	public int timeRequiredforCompetition(){
-		//TO DO
-		return -1;
-	}
-	public static void main (String[]args) throws FileNotFoundException {
-		CompetitionDijkstra dd= new CompetitionDijkstra("tinyEWD.txt",3,4,5);
-		PriorityQueue pq = new PriorityQueue();
-		//printing("tinyEWD.txt");
-
 	}
 }
