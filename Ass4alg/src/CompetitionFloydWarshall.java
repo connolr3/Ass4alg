@@ -33,57 +33,64 @@ public class CompetitionFloydWarshall {
 	 * @throws FileNotFoundException 
 	 */
 
-	CompetitionFloydWarshall (String filename, int sA, int sB, int sC) throws FileNotFoundException{
-		this.sA=sA;
-		this.sB=sB;
-		this.sC=sC;
-		File file = new File(filename);
-		Scanner scan = new Scanner(file);
-		for(int i = 0;scan.hasNextLine();i++) {
-			String line = scan.nextLine();
-			if (i==0) {
-				vertices = Integer.parseInt(line);	
-				SP = new double[vertices][vertices];
-				for (int rowIndex = 0;rowIndex<vertices;rowIndex++) {
-					for (int columnIndex=0;columnIndex<vertices;columnIndex++) {
-						if(rowIndex==columnIndex) 
-							SP[rowIndex][columnIndex]=0;
-						else {
-							SP[rowIndex][columnIndex]=Double.MAX_VALUE;
+	CompetitionFloydWarshall (String filename, int sA, int sB, int sC) {
+		try {		
+			this.sA=sA;
+			this.sB=sB;
+			this.sC=sC;
+			File file = new File(filename);
+			Scanner scan = new Scanner(file);
+			for(int i = 0;scan.hasNextLine();i++) {
+				String line = scan.nextLine();
+				if (i==0) {
+					vertices = Integer.parseInt(line);	
+					SP = new double[vertices][vertices];
+					for (int rowIndex = 0;rowIndex<vertices;rowIndex++) {
+						for (int columnIndex=0;columnIndex<vertices;columnIndex++) {
+							if(rowIndex==columnIndex) 
+								SP[rowIndex][columnIndex]=0;
+							else {
+								SP[rowIndex][columnIndex]=Integer.MAX_VALUE;
+							}
+						}
+					}
+				}
+				else if (i==1)
+					numberEdges =  Integer.parseInt(line);
+				if(i>1)
+				{
+					int firstNonZero = 0;
+					while(line.charAt(firstNonZero)==' ') {
+						firstNonZero++;	
+					}
+					line = line.substring(firstNonZero);
+					String[] splitted = line.split("\\s+");
+					int v = Integer.parseInt(splitted[0]);
+					int w = Integer.parseInt(splitted[1]);
+					double weight = Double.parseDouble(splitted[2]);
+					SP[v][w]=weight;
+				}
+			}
+			for(int i = 0; i <SP.length; i++)
+			{
+				for(int j = 0; j < SP.length; j++)
+				{
+					for(int k = 0; k < SP.length; k++)
+					{
+						if(SP[j][i] + SP[i][k] < SP[j][k])
+						{
+							SP[j][k] = SP[j][i] + SP[i][k];
 						}
 					}
 				}
 			}
-			else if (i==1)
-				numberEdges =  Integer.parseInt(line);
-			if(i>1)
-			{
-				int firstNonZero = 0;
-				while(line.charAt(firstNonZero)==' ') {
-					firstNonZero++;	
-				}
-				line = line.substring(firstNonZero);
-				String[] splitted = line.split("\\s+");
-				int v = Integer.parseInt(splitted[0]);
-				int w = Integer.parseInt(splitted[1]);
-				double weight = Double.parseDouble(splitted[2]);
-				SP[v][w]=weight;
-			}
+			//printArray(SP,vertices,vertices);
 		}
-		for(int i = 0; i <SP.length; i++)
+		catch(Exception x)
 		{
-			for(int j = 0; j < SP.length; j++)
-			{
-				for(int k = 0; k < SP.length; k++)
-				{
-					if(SP[j][i] + SP[i][k] < SP[j][k])
-					{
-						SP[j][k] = SP[j][i] + SP[i][k];
-					}
-				}
-			}
+			SP = new double[0][0];
+			return;
 		}
-		//printArray(SP,vertices,vertices);
 	}
 
 	/**
@@ -99,6 +106,9 @@ public class CompetitionFloydWarshall {
 		double maxDist=0;
 		for (int rowIndex = 0;rowIndex<vertices;rowIndex++) {
 			for (int columnIndex=0;columnIndex<vertices;columnIndex++) {
+				if (SP[rowIndex][columnIndex]==Integer.MAX_VALUE) {
+					return -1; //No path exists here
+				}
 				if (SP[rowIndex][columnIndex]>maxDist) {
 					maxDist = SP[rowIndex][columnIndex];
 				}
@@ -108,9 +118,11 @@ public class CompetitionFloydWarshall {
 		double slowestSpeed = Math.min(sA, Math.min(sB, sC));
 		return (int) Math.ceil(maxDist/slowestSpeed);
 	}
+	public static void printSP() {
+		System.out.println(Integer.MAX_VALUE);
+	}
 	public static void main (String[]args) throws FileNotFoundException {
-		CompetitionFloydWarshall dd= new CompetitionFloydWarshall("tinyEWD.txt",55,60,92);
-		int g = dd.timeRequiredforCompetition();
-		System.out.println("Shortest Time = "+g);
+		CompetitionFloydWarshall dd= new CompetitionFloydWarshall("input-C.txt",55,60,92);
+		System.out.println(dd.timeRequiredforCompetition());
 	}
 }

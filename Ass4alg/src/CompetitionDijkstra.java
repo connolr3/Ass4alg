@@ -25,8 +25,6 @@ public class CompetitionDijkstra {
 	public int numberEdges;
 	public int vertices;
 	public ArrayList<DirectedEdge>[] adj;
-	//public Array[] distTo;
-	//public ArrayList<Integer>[] edgeTo;
 	public double[][] distTo;
 	public int[][]  edgeTo;
 	/**
@@ -34,59 +32,65 @@ public class CompetitionDijkstra {
 	 * @param sA, sB, sC: speeds for 3 contestants
 	 * @throws FileNotFoundException 
 	 */
-	CompetitionDijkstra (String filename, int sA, int sB, int sC) throws FileNotFoundException{
-		this.sA=sA;
-		this.sB=sB;
-		this.sC=sC;
-		File file = new File(filename);
-		Scanner scan = new Scanner(file);
-		for(int i = 0;scan.hasNextLine();i++) {
-			String line = scan.nextLine();
-			if (i==0) {
-				vertices = Integer.parseInt(line);	
-				edgeTo = new int[vertices][vertices];
-				distTo = new double[vertices][vertices];
-				adj = new ArrayList[vertices];
-				//edgeTo = new ArrayList[vertices];
-				//distTo = new ArrayList[vertices];
-				// Initialize distTo[s][s] to 0 and distTo[s][v] to infinity for all other vertices v. 
-				for (int rowIndex = 0;rowIndex<vertices;rowIndex++) {
-					adj[rowIndex] = new ArrayList<DirectedEdge>(); 
-					for (int columnIndex=0;columnIndex<vertices;columnIndex++) {
-						//if edgeTo[v][w]=vertices, it hasn't been visisted
-						if(rowIndex==columnIndex) {
-							distTo[rowIndex][columnIndex]=0;
-							edgeTo[rowIndex][columnIndex]=rowIndex;}
-						else {
-							distTo[rowIndex][columnIndex]=Double.MAX_VALUE;
-							edgeTo[rowIndex][columnIndex]=-1;
+	@SuppressWarnings("unchecked")
+	CompetitionDijkstra (String filename, int sA, int sB, int sC) {
+		try {
+			this.sA=sA;
+			this.sB=sB;
+			this.sC=sC;
+			File file = new File(filename);
+			Scanner scan = new Scanner(file);
+			for(int i = 0;scan.hasNextLine();i++) {
+				String line = scan.nextLine();
+				if (i==0) {
+					vertices = Integer.parseInt(line);	
+					edgeTo = new int[vertices][vertices];
+					distTo = new double[vertices][vertices];
+					adj = new ArrayList[vertices];
+					// Initialize distTo[s][s] to 0 and distTo[s][v] to infinity for all other vertices v. 
+					for (int rowIndex = 0;rowIndex<vertices;rowIndex++) {
+						adj[rowIndex] = new ArrayList<DirectedEdge>(); 
+						for (int columnIndex=0;columnIndex<vertices;columnIndex++) {
+							if(rowIndex==columnIndex) {
+								distTo[rowIndex][columnIndex]=0;
+								edgeTo[rowIndex][columnIndex]=rowIndex;}
+							else {
+								distTo[rowIndex][columnIndex]=Integer.MAX_VALUE;
+								edgeTo[rowIndex][columnIndex]=-1;
+							}
 						}
 					}
 				}
-			}
-			else if (i==1)
-				numberEdges =  Integer.parseInt(line);
-			if(i>1)
-			{
-				int firstNonZero = 0;
-				while(line.charAt(firstNonZero)==' ') {
-					firstNonZero++;	
+				else if (i==1)
+					numberEdges =  Integer.parseInt(line);
+				if(i>1)
+				{
+					int firstNonZero = 0;
+					while(line.charAt(firstNonZero)==' ') {
+						firstNonZero++;	
+					}
+					line = line.substring(firstNonZero);
+					String[] splitted = line.split("\\s+");
+					int v = Integer.parseInt(splitted[0]);
+					int w = Integer.parseInt(splitted[1]);
+					double weight = Double.parseDouble(splitted[2]);
+					//edgeTo[v][w]=v;
+					//distTo[v][w]=weight;
+					DirectedEdge edge = new DirectedEdge(v,w,weight);
+					adj[v].add(edge); 
 				}
-				line = line.substring(firstNonZero);
-				String[] splitted = line.split("\\s+");
-				int v = Integer.parseInt(splitted[0]);
-				int w = Integer.parseInt(splitted[1]);
-				double weight = Double.parseDouble(splitted[2]);
-				//edgeTo[v][w]=v;
-				//distTo[v][w]=weight;
-				DirectedEdge edge = new DirectedEdge(v,w,weight);
-				adj[v].add(edge); 
+			}
+
+			for (int source=0;source<vertices;source++) {
+				relaxAllEdgesfromVertex(source, source);
 			}
 		}
-
-		for (int source=0;source<vertices;source++) {
-			relaxAllEdgesfromVertex(source, source);
-		}
+		catch(Exception x)
+    	{
+    		distTo = new double[0][0];
+    		edgeTo = new int[0][0];
+    		return;
+    	}
 	}
 
 	private void relaxAllEdgesfromVertex(int source, int vertex) {
@@ -116,12 +120,10 @@ public class CompetitionDijkstra {
 				// If  its not possible to run the competition 
 				//(i.e., if there are 2 random locations in a city between which no path exists), 
 				//the method should return -1
-				if (edgeTo[rowIndex][columnIndex]==-1) {
+				if (edgeTo[rowIndex][columnIndex]==-1) 
 					return -1;
-				}
-				if (distTo[rowIndex][columnIndex]>maxDist) {
+				if (distTo[rowIndex][columnIndex]>maxDist) 
 					maxDist = distTo[rowIndex][columnIndex];
-				}
 			}
 		}
 		maxDist=maxDist*1000;//convert from km to m
@@ -130,8 +132,7 @@ public class CompetitionDijkstra {
 	}
 
 	public static void main (String[]args) throws FileNotFoundException {
-		CompetitionDijkstra dd= new CompetitionDijkstra("tinyEWD.txt",55,60,92);
-		int g = dd.timeRequiredforCompetition();
-		System.out.println("Shortest Time = "+g);
+		CompetitionDijkstra dd= new CompetitionDijkstra("input-G.txt",55,60,92);
+		System.out.println(dd.timeRequiredforCompetition());
 	}
 }
